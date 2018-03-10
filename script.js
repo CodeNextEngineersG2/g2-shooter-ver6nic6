@@ -2,6 +2,8 @@
 var canvas;
 var gameScreen;
 var scoreDisplay;
+var canvasWidth;
+var canvasHeight;
 
 // Game Variables
 var gameRunning;
@@ -21,7 +23,7 @@ var bulletDiameter;
 var bulletX;
 var bulletY;
 
-// Alien Variables
+// Alien Variables 
 var alienDiameter;
 var alienX;
 var alienY;
@@ -32,9 +34,146 @@ var alienBulletDiameter;
 var alienBulletX;
 var alienBulletY;
 
+function setup() {
 
+	canvasWidth = 500;
+	canvasHeight = 500;
+	canvas = createCanvas(canvasWidth,canvasHeight);
+	gameScreen = select('#game-screen');
+	canvas.parent(gameScreen);
+
+	shipX = 250;
+	shipY = 450;
+	shipDiameter = 75;
+	shipSpeed = 3;
+
+	bulletDiameter = 30;
+	shipShooting = false;
+	
+	alienDiameter = 75;
+	alienVelocity = 10;
+	alienX = 40;
+	alienY = 40;
+
+	alienBulletDiameter = 25;
+	alienShooting = false;
+}
+
+function draw() {
+
+	background(0);
+	drawShip();
+	drawAlien();
+
+	if(shipShooting==true) {
+
+		drawBullet();
+
+	}
+
+	if(alienShooting==true) {
+
+		drawAlienBullet();
+	}
+}
+
+function drawShip() {
+
+	fill(192,192,192);
+	ellipse(shipX,shipY,shipDiameter,shipDiameter);
+
+	if (keyIsDown(LEFT_ARROW) && shipX > shipDiameter/2) {
+
+		shipX -= shipSpeed;
+
+	}
+
+	else if (keyIsDown(RIGHT_ARROW) && shipX < canvasWidth-shipDiameter/2) {
+
+		shipX += shipSpeed;
+	}
+
+}
+
+function keyPressed() {
+
+	if(keyCode===32 && shipShooting == false) {
+
+		bulletX = shipX;
+		bulletY = shipY;
+		shipShooting = true;
+
+	}
+
+	}
+
+function drawBullet() {
+
+	fill(99,99,59);
+	ellipse(bulletX,bulletY,bulletDiameter,bulletDiameter);
+
+	//bullet stuff
+	bulletY -= 10;
+
+	if (bulletY < 0) {
+
+		drawBullet();
+
+	}
+
+	else if (bulletY == 0) {
+
+		shipShooting = false; 
+	}
+
+
+}
+
+function drawAlien () {
+
+	alienX += alienVelocity;
+
+	if(alienX >= canvasWidth && alienX > alienDiameter/2) {
+ 
+		alienX -= alienVelocity;
+		alienVelocity = -10;
+
+	}
+
+	else if (alienX <= alienDiameter/2) {
+
+		alienVelocity = 10;
+	}
+
+	fill(46.7,86.7,46.7);
+	ellipse(alienX,alienY,alienDiameter,alienDiameter);
+
+	if(random(4) < 1 && !alienShooting) {
+
+		alienBulletX = alienX;
+		alienBulletY = alienY;
+		alienShooting = true;
+
+	}
+}
+
+function drawAlienBullet() {
+
+	fill(255);
+	ellipse(alienBulletX,alienBulletY,alienBulletDiameter,alienBulletDiameter);
+
+	if(alienBulletY < canvasHeight) {
+
+		alienBulletY += 10;
+	}
+
+	else {
+
+		alienShooting = false;
+
+	}
+}
 /*
- * setup()
  * This function is called once. Sets up the canvas, accesses HTML elements with
  * select(), and adds event listeners to those elements. Sets initial values of
  * variables by calling resetGame().
@@ -53,46 +192,6 @@ var alienBulletY;
  * resetGame()
  * This function "resets the game" by initializing ship, alien, and game
  * variables.
- */
-
-
-/*
- * draw()
- * This function animates the ship, alien, and both kinds of bullets, but only
- * if the game is running.
- */
-
-
-/*
- * drawShip()
- * This function draws the player's ship. It also controls the ship's
- * x value by checking if the player is holding down the left or right keys.
- */
-
-
-/*
- * keyPressed()
- * This function runs automatically when the player presses the spacebar
- * (keyCode === 32). If they do, and a bullet is not currently being fired
- * ("shipShooting" variable is false), it positions the bullet relative to the
- * ship. Then it sets the "shipShooting" variable to "true", indicating a ship
- * bullet is currently being fired.
- */
-
-
-/*
- * drawBullet()
- * This function draws a bullet. It also checks to see if the bullet has hit
- * the alien. If it has, the alien is reset to the top-left of the screen
- * and the player earns a point. The alien aslo becomes faster (i.e., harder
- * to hit) each time it is hit by a bullet.
- */
-
-
-/*
- * drawAlien()
- * This function draws an alien. It also checks to see if the alien has touched
- * the player's ship. If it has, the function calls gameOver().
  */
 
 
